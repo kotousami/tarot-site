@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>月導きの神託</title>
+<style>
+body{
+  margin:0;
+  height:100vh;
+  background:radial-gradient(circle at top,#1a0033,#000);
+  color:#f3e8ff;
+  font-family:"Hiragino Mincho ProN",serif;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  overflow:hidden;
+}
+
+/* 星エフェクト */
+body::before{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:200%;
+  background:url("https://www.transparenttextures.com/patterns/stardust.png");
+  animation:stars 60s linear infinite;
+  opacity:0.3;
+}
+@keyframes stars{
+  from{transform:translate(0,0);}
+  to{transform:translate(-500px,-500px);}
+}
+
+h1{
+  letter-spacing:4px;
+  margin-bottom:20px;
+}
+
+button{
+  background:linear-gradient(45deg,#5b0fff,#a64dff);
+  border:none;
+  padding:15px 40px;
+  font-size:18px;
+  color:white;
+  border-radius:30px;
+  cursor:pointer;
+  box-shadow:0 0 20px rgba(166,77,255,0.7);
+  transition:0.3s;
+}
+button:hover{transform:scale(1.05);}
+
+.card{
+  width:220px;
+  height:380px;
+  margin-top:25px;
+  border-radius:15px;
+  box-shadow:0 0 25px rgba(255,255,255,0.3);
+  display:none;
+}
+
+.name{
+  margin-top:15px;
+  font-size:22px;
+}
+
+.message{
+  margin-top:15px;
+  max-width:400px;
+  line-height:1.7;
+}
+
+.notice{
+  margin-top:15px;
+  font-size:14px;
+  opacity:0.7;
+}
+</style>
+</head>
+<body>
+
+<h1>🌙 月導きの神託 🌙</h1>
+<p>深呼吸して、心を静めてください</p>
+<button onclick="drawCard()">今日の神託を受け取る</button>
+
+<img id="cardImage" class="card">
+<div class="name" id="cardName"></div>
+<div class="message" id="message"></div>
+<div class="notice" id="notice"></div>
+
+<script>
+const tarot = [
+{name:"愚者",file:"fool.jpg",msg:"新しい扉が開こうとしています。恐れより好奇心を選んで。"},
+{name:"魔術師",file:"magician.jpg",msg:"あなたには現実を動かす力があります。"},
+{name:"女教皇",file:"priestess.jpg",msg:"静かな直感が今日の答えを知っています。"},
+{name:"女帝",file:"empress.jpg",msg:"愛と豊かさが満ちる兆し。"},
+{name:"皇帝",file:"emperor.jpg",msg:"自信を持ち、堂々と進むとき。"},
+{name:"法王",file:"hierophant.jpg",msg:"信頼できる導きを受け取る日。"},
+{name:"恋人",file:"lovers.jpg",msg:"魂が望む選択をしてください。"},
+{name:"戦車",file:"chariot.jpg",msg:"迷いを超え、前進のエネルギー。"},
+{name:"力",file:"strength.jpg",msg:"優しさこそ真の強さ。"},
+{name:"隠者",file:"hermit.jpg",msg:"内なる光と向き合う時間。"},
+{name:"運命の輪",file:"wheel.jpg",msg:"流れが変わります。チャンス到来。"},
+{name:"正義",file:"justice.jpg",msg:"公平な判断が未来を開きます。"},
+{name:"吊るされた男",file:"hanged.jpg",msg:"視点を変えると突破口が見える。"},
+{name:"死神",file:"death.jpg",msg:"終わりは再生の始まり。"},
+{name:"節制",file:"temperance.jpg",msg:"調和とバランスが鍵。"},
+{name:"悪魔",file:"devil.jpg",msg:"執着を手放せば自由になれる。"},
+{name:"塔",file:"tower.jpg",msg:"崩壊は新しい基盤作り。"},
+{name:"星",file:"star.jpg",msg:"希望の光があなたを導きます。"},
+{name:"月",file:"moon.jpg",msg:"不安の奥に真実がある。"},
+{name:"太陽",file:"sun.jpg",msg:"祝福と成功が訪れる日。"},
+{name:"審判",file:"judgement.jpg",msg:"魂の目覚めのタイミング。"},
+{name:"世界",file:"world.jpg",msg:"完成と達成のエネルギーに包まれる。"}
+];
+
+function drawCard(){
+  const today = new Date().toISOString().split('T')[0];
+  const saved = JSON.parse(localStorage.getItem("dailyTarot"));
+
+  if(saved && saved.date === today){
+    showCard(saved.index,saved.reversed,true);
+    return;
+  }
+
+  const index = Math.floor(Math.random()*tarot.length);
+  const reversed = Math.random()<0.5;
+
+  localStorage.setItem("dailyTarot",
+    JSON.stringify({date:today,index:index,reversed:reversed})
+  );
+
+  showCard(index,reversed,false);
+}
+
+function showCard(index,reversed,isRepeat){
+  const card = tarot[index];
+  const img = document.getElementById("cardImage");
+
+  img.src="images/"+card.file;
+  img.style.display="block";
+
+  if(reversed){ img.style.transform="rotate(180deg)"; }
+  else{ img.style.transform="rotate(0deg)"; }
+
+  document.getElementById("cardName").innerHTML =
+    "✨ "+card.name+(reversed?"（逆位置）":"（正位置）")+" ✨";
+
+  document.getElementById("message").innerHTML =
+    card.msg +
+    "<br><br>🌙 LINE登録者への神託：<br>この流れはあなたの魂の成長のために起きています。";
+
+  if(isRepeat){
+    document.getElementById("notice").innerText =
+      "今日はすでに神託を受け取っています。";
+  }
+}
+</script>
+
+</body>
+</html>
